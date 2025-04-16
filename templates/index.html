@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+  <h1 class="mb-4 text-center">Мои Заметки</h1>
+  {% if notes %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+      {% for note in notes %}
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0 custom-card">
+          <div class="card-body">
+            <h5 class="card-title">{{ note['title'] }}</h5>
+            <p class="card-text">{{ note['content']|truncate(150) }}</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">{{ note['created_at'] }}</small>
+            <div>
+              <a href="{{ url_for('edit', note_id=note['id']) }}" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+              <form method="post" action="{{ url_for('delete', note_id=note['id']) }}" class="d-inline">
+                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить заметку?');">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center">Заметок пока нет. <a href="{{ url_for('add') }}">Добавьте первую заметку</a>.</p>
+  {% endif %}
+{% endblock %}

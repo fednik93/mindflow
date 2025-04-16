@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Добавить заметку{% endblock %}
+{% block content %}
+  <h1 class="mb-4 text-center">Добавить новую заметку</h1>
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <!-- Панель форматирования -->
+      <div class="btn-group mb-3" role="group" aria-label="Форматирование">
+        <button type="button" class="btn btn-secondary format-btn" data-command="formatBlock" data-value="H2">Заголовок</button>
+        <button type="button" class="btn btn-secondary format-btn" data-command="insertUnorderedList">Список</button>
+        <button type="button" class="btn btn-secondary format-btn" data-command="bold">Выделить</button>
+      </div>
+      <form method="post" class="p-4 shadow-sm rounded bg-white">
+        <div class="mb-3">
+          <label for="title" class="form-label">Заголовок</label>
+          <input type="text" class="form-control" name="title" id="title" placeholder="Введите заголовок" required>
+        </div>
+        <div class="mb-3">
+          <label for="content" class="form-label">Содержимое</label>
+          <!-- Вместо textarea используем contenteditable div -->
+          <div id="content" contenteditable="true" class="form-control" style="min-height:150px;" placeholder="Введите текст заметки"></div>
+          <!-- Скрытое поле для передачи данных на сервер -->
+          <textarea name="content" id="content-hidden" style="display:none;"></textarea>
+        </div>
+        <div class="mb-3">
+          <label for="date" class="form-label">Дата (формат YYYY-MM-DD)</label>
+          <input type="date" class="form-control" name="date" id="date" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Добавить заметку</button>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Скрипт для форматирования и передачи контента -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Обработка кнопок форматирования
+      document.querySelectorAll(".format-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const command = btn.getAttribute("data-command");
+          const value = btn.getAttribute("data-value") || null;
+          document.execCommand(command, false, value);
+        });
+      });
+      
+      // Перед отправкой формы копируем содержимое из contenteditable в скрытое поле
+      document.querySelector("form").addEventListener("submit", () => {
+        document.getElementById("content-hidden").value = document.getElementById("content").innerHTML;
+      });
+    });
+  </script>
+{% endblock %}
