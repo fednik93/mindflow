@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # для flash-сообщений
+app.secret_key = 'your_secret_key'
 
 def get_db_connection():
     conn = sqlite3.connect('notes.db')
@@ -12,12 +12,13 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     conn.execute('''
-        CREATE TABLE IF NOT EXISTS notes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
+      CREATE TABLE IF NOT EXISTS notes (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        title       TEXT    NOT NULL,
+        content     TEXT    NOT NULL,
+        date        TEXT,
+        created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
     ''')
     conn.commit()
     conn.close()
@@ -29,23 +30,27 @@ def index():
     conn.close()
     return render_template('index.html', notes=notes)
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET','POST'])
 def add():
     if request.method == 'POST':
-        title = request.form['title'].strip()
+        title   = request.form['title'].strip()
         content = request.form['content'].strip()
-        if not title or not content:
+        date    = request.form['date'].strip()
+        if not title or not content or not date:
             flash("Заполните все поля!", "warning")
             return redirect(url_for('add'))
         conn = get_db_connection()
-        conn.execute('INSERT INTO notes (title, content) VALUES (?, ?)', (title, content))
+        conn.execute(
+            'INSERT INTO notes (title, content, date) VALUES (?, ?, ?)',
+            (title, content, date)
+        )
         conn.commit()
         conn.close()
         flash("Заметка успешно добавлена!", "success")
         return redirect(url_for('index'))
     return render_template('add.html')
 
-@app.route('/edit/<int:note_id>', methods=['GET', 'POST'])
+@app.route('/edit/<int:note_id>', methods=['GET','POST'])
 def edit(note_id):
     conn = get_db_connection()
     note = conn.execute('SELECT * FROM notes WHERE id = ?', (note_id,)).fetchone()
@@ -53,15 +58,19 @@ def edit(note_id):
         flash("Заметка не найдена!", "danger")
         return redirect(url_for('index'))
     if request.method == 'POST':
-        title = request.form['title'].strip()
+        title   = request.form['title'].strip()
         content = request.form['content'].strip()
-        if not title or not content:
+        date    = request.form['date'].strip()
+        if not title or not content or not date:
             flash("Заполните все поля!", "warning")
             return redirect(url_for('edit', note_id=note_id))
-        conn.execute('UPDATE notes SET title = ?, content = ? WHERE id = ?', (title, content, note_id))
+        conn.execute(
+            'UPDATE notes SET title = ?, content = ?, date = ? WHERE id = ?',
+            (title, content, date, note_id)
+        )
         conn.commit()
         conn.close()
-        flash("Заметка успешно обновлена!", "success")
+        flash("Заметка обновлена!", "success")
         return redirect(url_for('index'))
     conn.close()
     return render_template('edit.html', note=note)
@@ -75,17 +84,31 @@ def delete(note_id):
     flash("Заметка удалена!", "info")
     return redirect(url_for('index'))
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET','POST'])
 def search():
     results = []
     query = ""
     if request.method == 'POST':
         query = request.form['query'].strip()
         conn = get_db_connection()
-        results = conn.execute("SELECT * FROM notes WHERE title LIKE ? OR content LIKE ? ORDER BY created_at DESC",
-                              ('%' + query + '%', '%' + query + '%')).fetchall()
+        results = conn.execute(
+            "SELECT * FROM notes WHERE title LIKE ? OR content LIKE ? ORDER BY created_at DESC",
+            ('%'+query+'%', '%'+query+'%')
+        ).fetchall()
         conn.close()
     return render_template('search.html', results=results, query=query)
+
+@app.route('/calendar')
+def calendar_view():
+    conn = get_db_connection()
+    rows = conn.execute('SELECT id, title, date FROM notes WHERE date IS NOT NULL').fetchall()
+    conn.close()
+    events = [{
+        'title': row['title'],
+        'start': row['date'],
+        'url':   url_for('edit', note_id=row['id'])
+    } for row in rows]
+    return render_template('calendar.html', events=events)
 
 if __name__ == '__main__':
     init_db()

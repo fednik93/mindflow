@@ -115,3 +115,8 @@ body.theme-green .btn-primary {
 .theme-dark-btn { background-color: #1f1f1f; }
 .theme-blue-btn { background-color: #0077cc; }
 .theme-green-btn { background-color: #2ecc71; }
+
+#theme-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
