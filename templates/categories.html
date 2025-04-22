@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Категории{% endblock %}
+
+{% block content %}
+  <h1 class="mb-4 text-center">Управление категориями</h1>
+  <div class="row">
+    <div class="col-md-6">
+      <form method="post" class="mb-4 p-3 shadow-sm rounded bg-white">
+        <div class="mb-3">
+          <label for="name" class="form-label">Новая категория</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="Введите название" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    {% if categories %}
+      <ul class="list-group col-md-6">
+        {% for cat in categories %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ cat.name }}
+            <!-- можно добавить кнопку удаления/редактирования позже -->
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-center">Категорий пока нет.</p>
+    {% endif %}
+  </div>
+{% endblock %}

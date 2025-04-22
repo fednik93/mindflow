@@ -13,6 +13,21 @@
           <label for="content" class="form-label">Содержимое</label>
           <textarea class="form-control" name="content" id="content" rows="5" required>{{ note['content'] }}</textarea>
         </div>
+        <div class="mb-3">
+          <label for="date" class="form-label">Дата</label>
+          <input type="date" class="form-control" name="date" id="date" value="{{ note['date'] }}" required>
+        </div>
+        <div class="mb-3">
+          <label for="category_id" class="form-label">Категория</label>
+          <select class="form-select" name="category_id" id="category_id">
+            <option value="">Без категории</option>
+            {% for category in categories %}
+              <option value="{{ category['id'] }}" {% if category['id'] == note['category_id'] %}selected{% endif %}>
+                {{ category['name'] }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-success">Сохранить</button>
           <a href="{{ url_for('index') }}" class="btn btn-secondary">Отмена</a>

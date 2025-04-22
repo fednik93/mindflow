@@ -8,8 +8,13 @@
       <div class="col">
         <div class="card h-100 shadow-sm border-0 custom-card">
           <div class="card-body">
-            <h5 class="card-title">{{ note['title'] }}</h5>
-            <p class="card-text">{{ note['content']|safe }}</p> <!-- вот это главное -->
+            <h5 class="card-title">
+              {{ note['title'] }}
+              {% if note['category_name'] %}
+                <span class="badge bg-info text-dark">{{ note['category_name'] }}</span>
+              {% endif %}
+            </h5>
+            <p class="card-text">{{ note['content']|safe }}</p>
           </div>
           <div class="card-footer d-flex justify-content-between align-items-center">
             <small class="text-muted">{{ note['date'] }}</small>
