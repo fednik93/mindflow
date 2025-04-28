@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Личный кабинет</h1>
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <div class="card shadow-sm p-4">
+      <div class="text-center mb-4">
+        <img src="{{ url_for('static', filename='avatars/' + avatar) }}" class="rounded-circle" width="120" height="120" alt="Аватар">
+      </div>
+
+      <h4 class="text-center mb-3">Привет, {{ current_user.username }}!</h4>
+
+      <p class="text-center text-muted">Количество заметок: <strong>{{ notes_count }}</strong></p>
+
+      <hr>
+
+      <form method="post">
+        <div class="mb-3">
+          <label for="first_name" class="form-label">Имя</label>
+          <input type="text" name="first_name" id="first_name" class="form-control" value="{{ first_name }}">
+        </div>
+        <div class="mb-3">
+          <label for="last_name" class="form-label">Фамилия</label>
+          <input type="text" name="last_name" id="last_name" class="form-control" value="{{ last_name }}">
+        </div>
+        <div class="mb-3">
+          <label for="age" class="form-label">Возраст</label>
+          <input type="number" name="age" id="age" class="form-control" value="{{ age }}">
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Аватар</label>
+          <div class="d-flex flex-wrap gap-3">
+            {% for av in avatars %}
+              <label>
+                <input type="radio" name="avatar" value="{{ av }}" {% if av == avatar %}checked{% endif %}>
+                <img src="{{ url_for('static', filename='avatars/' + av) }}" width="70" height="70" class="rounded-circle border">
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3">Сохранить изменения</button>
+      </form>
+
+      <a href="{{ url_for('index') }}" class="btn btn-outline-secondary w-100 mt-3">← Вернуться назад</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
