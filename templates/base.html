@@ -34,7 +34,8 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('add') }}">Добавить</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}">Поиск</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('calendar_view') }}">Календарь</a></li>
-        
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('profile') }}">Профиль</a></li>
+
           {% if current_user.is_authenticated %}
             <li class="nav-item ms-3">
               <a class="btn btn-outline-light btn-sm px-3" href="{{ url_for('logout') }}" title="Выйти">
