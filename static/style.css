@@ -140,3 +140,32 @@ body.theme-dark .fc .fc-button {
 /* Синяя тема */
 body.theme-blue #calendar { background: #eaf4fc; }
 /* …и так далее для других тем… */
+/* Основной стиль календаря */
+#calendar {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Заголовок календаря */
+.fc-toolbar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* Кнопки */
+.fc-button {
+  border-radius: 6px;
+  font-weight: 500;
+}
+.fc-button-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+.fc-button-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
