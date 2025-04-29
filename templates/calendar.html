@@ -2,45 +2,59 @@
 {% block title %}Календарь{% endblock %}
 
 {% block content %}
-  <h1 class="mb-4 text-center">Календарь заметок</h1>
-  <div id="calendar"></div>
+<h1 class="mb-4 text-center">Календарь заметок</h1>
+<div id="calendar"></div>
 
-  <!-- FullCalendar CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet"/>
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet"/>
 
-  <!-- FullCalendar JS -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
-  <!-- Русская локаль -->
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/ru.js"></script>
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/ru.js"></script>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var calendarEl = document.getElementById('calendar');
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        locale: 'ru',
-        firstDay: 1,             // <-- неделя с понедельника
-        initialView: 'dayGridMonth',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,listWeek'
-        },
-        events: {{ events|tojson|safe }},
-        eventClick: function(info) {
-          info.jsEvent.preventDefault();
-          if (info.event.url) {
-            window.location.href = info.event.url;
-          }
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      locale: 'ru',
+      firstDay: 1,
+      selectable: true,    // <--- включаем выделение мышью
+      selectMirror: true,
+      nowIndicator: true,
+      initialView: 'dayGridMonth',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,listWeek'
+      },
+      events: {{ events|tojson|safe }},
+      eventClick: function(info) {
+        info.jsEvent.preventDefault();
+        if (info.event.url) {
+          window.location.href = info.event.url;
         }
-      });
-      calendar.render();
-    });
-  </script>
+      },
+      select: function(info) {
+        // Получаем дату начала и окончания в формате YYYY-MM-DDTHH:MM:SS
+        var start = info.startStr;
+        var end = info.endStr;
 
-  <style>
-    #calendar {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-  </style>
+        if (confirm(`Создать заметку с ${start} до ${end}?`)) {
+          // Отправляем параметры в /add
+          window.location.href = `/add?date=${start.substring(0, 10)}&start_time=${start.substring(11, 16)}&end_time=${end.substring(11, 16)}`;
+        }
+      }
+    });
+
+    calendar.render();
+  });
+</script>
+
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+</style>
 {% endblock %}

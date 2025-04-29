@@ -16,7 +16,24 @@
       <p class="text-center text-muted">Количество заметок: <strong>{{ notes_count }}</strong></p>
 
       <hr>
-
+      <h5>Группа</h5>
+        <p><strong>Ваш код группы:</strong> {{ group_code }}</p>
+      {% if group_code %}
+        <div class="mb-4 text-center">
+          <p>Вы в группе: <strong>{{ group_code }}</strong></p>
+          <form method="post" class="d-inline">
+            <input type="hidden" name="action" value="leave_group">
+            <button type="submit" class="btn btn-outline-danger">Выйти из группы</button>
+          </form>
+        </div>
+        {% endif %}
+        <form method="post">
+          <div class="mb-3">
+            <label for="join_group" class="form-label">Присоединиться к группе (введите код)</label>
+            <input type="text" name="join_group" id="join_group" class="form-control">
+          </div>
+          <button type="submit" name="action" value="join_group" class="btn btn-secondary">Присоединиться</button>
+        </form>
       <form method="post">
         <div class="mb-3">
           <label for="first_name" class="form-label">Имя</label>

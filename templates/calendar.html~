@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Календарь{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Календарь заметок</h1>
+<div id="calendar"></div>
+
+<!-- FullCalendar CSS -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet"/>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/locales/ru.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+  locale: 'ru',
+  firstDay: 1,
+  initialView: 'dayGridMonth',
+  selectable: true,
+  select: function(info) {
+    const start = info.startStr.split("T")[0];
+    const startTime = info.startStr.split("T")[1] || '';
+    const endTime = info.endStr.split("T")[1] || '';
+    window.location.href = `/add?date=${start}&start_time=${startTime}&end_time=${endTime}`;
+  },
+  headerToolbar: {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,listWeek'
+  },
+  events: {{ events|tojson|safe }},
+  eventClick: function(info) {
+    info.jsEvent.preventDefault();
+    if (info.event.url) {
+      window.location.href = info.event.url;
+    }
+  }
+});
+
+
+    calendar.render();
+  });
+</script>
+
+<style>
+  #calendar {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+</style>
+{% endblock %}
